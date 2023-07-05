@@ -8,7 +8,7 @@ module.exports.getCards = (req, res) => {
 };
 
 module.exports.createCard = (req, res) => {
-  const owner = req.user.cardId;
+  const owner = req.user._id;
   const { name, link } = req.body;
   Card.create({ name, link, owner })
     .then((card) => res.status(201).send(card))
@@ -45,7 +45,7 @@ module.exports.deleteCard = (req, res) => {
 module.exports.likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.id,
-    { $addToSet: { likes: req.user.likeId } },
+    { $addToSet: { likes: req.user._id } },
     { new: true },
   )
     .orFail(() => new Error('Not Found'))
@@ -68,7 +68,7 @@ module.exports.likeCard = (req, res) => {
 module.exports.deleteLike = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.id,
-    { $pull: { likes: req.user.likeId } },
+    { $pull: { likes: req.user._id } },
     { new: true },
   )
     .orFail(() => new Error('Not Found'))
