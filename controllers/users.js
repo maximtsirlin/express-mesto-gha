@@ -1,13 +1,17 @@
 const User = require('../models/user');
-const { ERROR_BAD_REQUEST, ERROR_NOT_FOUND, ERROR_DEFAULT } = require('../errors/errors');
+const {
+  ERROR_BAD_REQUEST,
+  ERROR_NOT_FOUND,
+  ERROR_DEFAULT,
+} = require('../errors/errors');
 
-module.exports.getUsers = (req, res) => {
+const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(200).send(users))
     .catch(() => res.status(ERROR_DEFAULT).send({ message: 'Ошибка на сервере' }));
 };
 
-module.exports.getUser = (req, res) => {
+const getUser = (req, res) => {
   User.findById(req.params.id)
     .orFail(() => new Error('Not found'))
     .then((user) => res.status(200).send(user))
@@ -26,7 +30,7 @@ module.exports.getUser = (req, res) => {
     });
 };
 
-module.exports.createUser = (req, res) => {
+const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
     .then((user) => res.status(201).send(user))
@@ -41,7 +45,7 @@ module.exports.createUser = (req, res) => {
     });
 };
 
-module.exports.updateUser = (req, res) => {
+const updateUser = (req, res) => {
   const { name, about } = req.body;
   const id = req.user._id;
   User.findByIdAndUpdate(id, { name, about }, { new: true, runValidators: true })
@@ -62,7 +66,7 @@ module.exports.updateUser = (req, res) => {
     });
 };
 
-module.exports.updateAvatar = (req, res) => {
+const updateAvatar = (req, res) => {
   const { avatar } = req.body;
   const id = req.user._id;
   User.findByIdAndUpdate(id, { avatar }, { new: true, runValidators: true })
@@ -81,4 +85,12 @@ module.exports.updateAvatar = (req, res) => {
         res.status(ERROR_DEFAULT).send({ message: 'На сервере произошла ошибка.' });
       }
     });
+};
+
+module.exports = {
+  getUsers,
+  getUser,
+  createUser,
+  updateUser,
+  updateAvatar,
 };
