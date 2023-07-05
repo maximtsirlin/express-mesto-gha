@@ -1,22 +1,16 @@
 const User = require('../models/user');
-const {
-  ERROR_BAD_REQUEST,
-  ERROR_NOT_FOUND,
-  ERROR_DEFAULT,
-  HTTP_OK,
-  HTTP_CREATED,
-} = require('../errors/errors');
+const { ERROR_BAD_REQUEST, ERROR_NOT_FOUND, ERROR_DEFAULT } = require('../errors/errors');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(HTTP_OK).send(users))
+    .then((users) => res.status(200).send(users))
     .catch(() => res.status(ERROR_DEFAULT).send({ message: 'Ошибка на сервере' }));
 };
 
 module.exports.getUser = (req, res) => {
   User.findById(req.params.id)
     .orFail(() => new Error('Not found'))
-    .then((user) => res.status(HTTP_OK).send(user))
+    .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
         res
@@ -35,7 +29,7 @@ module.exports.getUser = (req, res) => {
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
-    .then((user) => res.status(HTTP_CREATED).send(user))
+    .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res
@@ -52,7 +46,7 @@ module.exports.updateUser = (req, res) => {
   const id = req.user._id;
   User.findByIdAndUpdate(id, { name, about }, { new: true, runValidators: true })
     .orFail(() => new Error('Not found'))
-    .then((user) => res.status(HTTP_OK).send(user))
+    .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res
