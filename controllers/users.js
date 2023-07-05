@@ -67,7 +67,7 @@ module.exports.updateAvatar = (req, res) => {
   const id = req.user._id;
   User.findByIdAndUpdate(id, { avatar }, { new: true, runValidators: true })
     .orFail(() => new Error('Not found'))
-    .then((user) => res.status(HTTP_OK).send(user))
+    .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res
