@@ -1,9 +1,15 @@
 const Card = require('../models/card');
-const { ERROR_BAD_REQUEST, ERROR_NOT_FOUND, ERROR_DEFAULT } = require('../errors/errors');
+const {
+  ERROR_BAD_REQUEST,
+  ERROR_NOT_FOUND,
+  ERROR_DEFAULT,
+  HTTP_OK,
+  HTTP_CREATED,
+} = require('../errors/errors');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
-    .then((cards) => res.status(200).send(cards))
+    .then((cards) => res.status(HTTP_OK).send(cards))
     .catch(() => res.status(ERROR_DEFAULT).send({ message: 'Ошибка на сервере' }));
 };
 
@@ -11,7 +17,7 @@ module.exports.createCard = (req, res) => {
   const owner = req.user._id;
   const { name, link } = req.body;
   Card.create({ name, link, owner })
-    .then((card) => res.status(201).send(card))
+    .then((card) => res.status(HTTP_CREATED).send(card))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res
@@ -26,7 +32,7 @@ module.exports.createCard = (req, res) => {
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.id)
     .orFail(() => new Error('Not Found'))
-    .then((card) => res.status(200).send(card))
+    .then((card) => res.status(HTTP_OK).send(card))
     .catch((err) => {
       if (err.message === 'Not Found') {
         res
@@ -49,7 +55,7 @@ module.exports.likeCard = (req, res) => {
     { new: true },
   )
     .orFail(() => new Error('Not Found'))
-    .then((card) => res.status(200).send(card))
+    .then((card) => res.status(HTTP_OK).send(card))
     .catch((err) => {
       if (err.message === 'Not Found') {
         res
@@ -72,7 +78,7 @@ module.exports.deleteLike = (req, res) => {
     { new: true },
   )
     .orFail(() => new Error('Not Found'))
-    .then((card) => res.status(200).send(card))
+    .then((card) => res.status(HTTP_OK).send(card))
     .catch((err) => {
       if (err.message === 'Not Found') {
         res

@@ -1,16 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
-const bodyParser = require('body-parser');
-
 const app = express();
 
 const usersRouter = require('./routes/users');
 const usersCard = require('./routes/cards');
 
 const { ERROR_NOT_FOUND } = require('./errors/errors');
-
-// const { PORT = 3001 } = process.env;
 
 const PORT = 3000;
 
@@ -23,16 +19,15 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(bodyParser.json());
+app.use(express.json()); // Используем express.json() вместо bodyParser.json()
 
 app.use('/users', usersRouter);
 app.use('/cards', usersCard);
 
-app.use('*', (reg, res) => {
+app.use('*', (req, res) => {
   res.status(ERROR_NOT_FOUND).send({ message: 'Запрошен несуществующий роут' });
 });
 
 app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
   console.log(`Сервер запущен! ${PORT}`);
 });
