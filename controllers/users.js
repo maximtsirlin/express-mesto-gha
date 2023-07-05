@@ -43,7 +43,7 @@ module.exports.createUser = (req, res) => {
 
 module.exports.updateUser = (req, res) => {
   const { name, about } = req.body;
-  const id = req.user.userId;
+  const id = req.user._id;
   User.findByIdAndUpdate(id, { name, about }, { new: true, runValidators: true })
     .orFail(() => new Error('Not found'))
     .then((user) => res.status(200).send(user))
@@ -57,14 +57,14 @@ module.exports.updateUser = (req, res) => {
           .status(ERROR_NOT_FOUND)
           .send({ message: 'Пользователь с указанным _id не найден.' });
       } else {
-        res.status(ERROR_DEFAULT).send({ message: 'Ошибка на сервере' });
+        res.status(ERROR_DEFAULT).send({ message: 'На сервере произошла ошибка.' });
       }
     });
 };
 
 module.exports.updateAvatar = (req, res) => {
   const { avatar } = req.body;
-  const id = req.user.avatarId;
+  const id = req.user._id;
   User.findByIdAndUpdate(id, { avatar }, { new: true })
     .orFail(() => new Error('Not found'))
     .then((user) => res.status(200).send(user))
