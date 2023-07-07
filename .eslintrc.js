@@ -3,7 +3,7 @@ module.exports = {
     es2021: true,
     node: true,
   },
-  extends: 'airbnb',
+  extends: 'airbnb-base',
   overrides: [
     {
       env: {
