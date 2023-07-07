@@ -3,7 +3,7 @@ const {
   ERROR_BAD_REQUEST,
   ERROR_NOT_FOUND,
   ERROR_DEFAULT,
-  
+
 } = require('../errors/errors');
 
 const getUsers = (req, res) => {
