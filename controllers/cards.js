@@ -1,5 +1,7 @@
 const Card = require('../models/card');
-const { ERROR_BAD_REQUEST, ERROR_NOT_FOUND, ERROR_DEFAULT } = require('../errors/errors');
+const {
+  ERROR_BAD_REQUEST, ERROR_NOT_FOUND, ERROR_DEFAULT, ERROR_FORBIDDEN,
+} = require('../errors/errors');
 
 const getCards = (req, res) => {
   Card.find({})
@@ -24,18 +26,38 @@ const createCard = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.id)
-    .orFail(() => new Error('Not Found'))
-    .then((card) => res.send(card))
-    .catch((err) => {
-      if (err.message === 'Not Found') {
-        res
+  const cardId = req.params.id;
+  const userId = req.user.id; // Assuming you have the user ID stored in the req.user.id
+
+  Card.findById(cardId)
+    .then((card) => {
+      if (!card) {
+        return res
           .status(ERROR_NOT_FOUND)
           .send({ message: 'Карточка с указанным _id не найдена.' });
-      } else if (err.name === 'CastError') {
-        res
-          .status(ERROR_BAD_REQUEST)
-          .send({ message: 'Переданы некорректные данные для удаления карточки.' });
+      }
+
+      // Check if the current user is the owner of the card
+      if (card.owner !== userId) {
+        return res.status(ERROR_FORBIDDEN).send({
+          message: 'Вы не можете удалить эту карточку, так как вы не являетесь ее владельцем.',
+        });
+      }
+
+      // Delete the card
+      return Card.findByIdAndRemove(cardId)
+        .then((deletedCard) => {
+          res.send(deletedCard);
+        })
+        .catch(() => {
+          res.status(ERROR_DEFAULT).send({ message: 'Ошибка на сервере' });
+        });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(ERROR_BAD_REQUEST).send({
+          message: 'Переданы некорректные данные для удаления карточки.',
+        });
       } else {
         res.status(ERROR_DEFAULT).send({ message: 'Ошибка на сервере' });
       }
