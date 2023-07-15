@@ -7,7 +7,6 @@ const usersRouter = require('./routes/users');
 const usersCard = require('./routes/cards');
 const { createUser } = require('./controllers/users');
 const login = require('./controllers/login');
-const auth = require('./middlewares/auth');
 
 const { ERROR_NOT_FOUND } = require('./errors/errors');
 
@@ -26,14 +25,13 @@ app.use(bodyParser.json());
 
 app.post('/signin', login);
 app.post('/signup', createUser);
-app.use(auth);
 
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: '649f378e602babba1d1a2872',
-//   };
-//   next();
-// });
+app.use((req, res, next) => {
+  req.user = {
+    _id: '649f378e602babba1d1a2872',
+  };
+  next();
+});
 
 app.use('/users', usersRouter);
 app.use('/cards', usersCard);
