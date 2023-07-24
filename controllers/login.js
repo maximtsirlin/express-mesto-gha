@@ -1,21 +1,48 @@
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const User = require('../models/user');
-const { ERROR_UNAUTHORIZED } = require('../errors/errors');
+const ConflictError = require('../errors/conflict-error');
+const BadRequestError = require('../errors/badRequest-error');
 
-module.exports.login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
-  return User.findUserByCredentials(email, password)
+  return User
+    .findUserByCredentials({ email, password })
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'login_token', { expiresIn: '7d' });
-      const day = 24 * 60 * 60 * 1000;
-      res.status(201).cookie('login_token', `Bearer ${token}`, {
-        maxAge: 7 * day, httpOnly: true,
+      const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
+        expiresIn: '7d',
       });
+      res.send({ token });
+    })
+    .catch(next);
+};
+
+const createUser = (req, res, next) => {
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
+    .then((user) => {
+      // eslint-disable-next-line no-param-reassign
+      user.password = undefined;
+      res.status(201).send(user);
     })
     .catch((err) => {
-      if (err.name === 'CastError');
-      res
-        .status(ERROR_UNAUTHORIZED)
-        .send({ message: 'Ошибка авторизации' });
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Некорректные данные при создании пользователя.'));
+        return;
+      } if (err.code === 11000) {
+        next(new ConflictError('Пользователь с таким email уже существует'));
+        return;
+      }
+      next(err);
     });
+};
+
+module.exports = {
+  login,
+  createUser,
 };
