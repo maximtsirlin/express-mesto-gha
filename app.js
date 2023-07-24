@@ -26,6 +26,13 @@ app.use('*', (reg, res) => {
   res.status(404).send({ message: 'Запрошен несуществующий роут' });
 });
 
+app.use((req, res, next) => {
+  req.user = {
+    _id: '649f378e602babba1d1a2872',
+  };
+  next();
+});
+
 app.use(errors());
 app.use(errorHandler);
 
