@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs'); // модуль для хэширования пароля
 const User = require('../models/user');
 const ConflictError = require('../errors/conflict-error');
 const BadRequestError = require('../errors/badRequest-error');
