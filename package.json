@@ -11,6 +11,8 @@
   "author": "Maxim Tsirlin",
   "license": "ISC",
   "dependencies": {
+    "@hapi/hoek": "^11.0.2",
+    "@hapi/joi": "^17.1.1",
     "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "bcryptjs": "^2.4.3",

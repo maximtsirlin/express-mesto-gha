@@ -1,10 +1,10 @@
 const { Joi, celebrate } = require('celebrate');
-const { isURL } = require('../constants');
+const { urlRegex } = require('../constants');
 
 const validateCreateCard = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(),
-    link: Joi.string().required().pattern(isURL),
+    link: Joi.string().required().pattern(urlRegex),
   }),
 });
 
