@@ -10,7 +10,7 @@ const urlRegex = (url) => {
 };
 
 const idRegex = (id) => {
-  if (isID) {
+  if (isID(id)) {
     return id;
   }
   throw new BadRequest('Передан некорретный id.');
