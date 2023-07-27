@@ -1,2 +1,1 @@
-module.exports.isURL = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
-module.exports.isID = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+module.exports.urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
