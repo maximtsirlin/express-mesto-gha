@@ -3,7 +3,7 @@ const { isURL, isID } = require('../constants');
 const BadRequest = require('../../errors/badRequest-error');
 
 const urlRegex = (url) => {
-  if (isURL) {
+  if (isURL(url)) {
     return url;
   }
   throw new BadRequest('Некорректный адрес URL');
