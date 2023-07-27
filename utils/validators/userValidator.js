@@ -51,3 +51,8 @@ module.exports.validateUserId = celebrate({
     userId: Joi.string().required().custom(idRegex),
   }),
 });
+
+module.exports = {
+  isURL,
+  isID,
+};
