@@ -9,6 +9,7 @@ const cardRoutes = require('./routes/cards');
 const authRoutes = require('./routes/auth');
 const auth = require('./middlewares/auth');
 const errorHandler = require('./middlewares/error-handler');
+const NotFoundError = require('./errors/notFound-error');
 
 const { PORT = 3000, MONGODB = 'mongodb://localhost:27017/mestodb' } = process.env;
 
@@ -22,8 +23,8 @@ mongoose.connect(MONGODB);
 app.use('/', authRoutes);
 app.use('/users', auth, userRoutes);
 app.use('/cards', auth, cardRoutes);
-app.use('*', (reg, res) => {
-  res.status(404).send({ message: 'Запрошен несуществующий роут' });
+app.use('*', (req, res, next) => {
+  next(new NotFoundError('Маршрут не найден'));
 });
 
 app.use(errors());
